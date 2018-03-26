@@ -3,16 +3,47 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
+import java.util.Comparator;
 
 // http://coursera.cs.princeton.edu/algs4/assignments/collinear.html
 
 public class BruteCollinearPoints {
+    
+    private class SegmentStorage {
+        private class Segment {
+            private Point a;
+            private Point b;
+            
+            public Segment(Point a, Point b) {
+                this.a = a;
+                this.b = b;
+            }
+        }
+        private List<Segment> segs = new ArrayList<Segment>();
+        
+        public void addSegment(Point start, Point end) {
+            segs.add(new Segment(start, end));
+        }
+        
+        public boolean contains(Point a, Point b) {
+            for (Segment s : segs) {
+                if (s.a == a && s.b == b) {
+                    return true;
+                }
+                if (s.a == b && s.b == a) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
     private List<LineSegment> segments = new ArrayList<LineSegment>();
     
     public BruteCollinearPoints(Point[] points) {
-        if (points == null) {
-            throw new java.lang.IllegalArgumentException();
-        }
+        checkForNullAndDuplicates(points);
+        SegmentStorage segs = new SegmentStorage();
         
         for (int p = 0; p < points.length; p++) {
             for (int q = p + 1; q < points.length; q++) {
@@ -23,14 +54,46 @@ public class BruteCollinearPoints {
                         double slopeR = first.slopeTo(points[r]);
                         double slopeS = first.slopeTo(points[s]);
                         if (slopeQ == slopeR && slopeQ == slopeS) {
-                            StdOut.printf("Slopes: Q: %f, R: %f, S: %s", slopeQ, slopeR, slopeS);
-                            //StdOut.printf("found one: %s, %s, %s, %s", points[p].toString(), points[q].toString(), points[r].toString(), points[s].toString());
-                            segments.add(new LineSegment(points[p], points[s]));
+                            Point[] seg = new Point[] {points[p], points[q], points[r], points[s]};
+                            Arrays.sort(seg, naturalOrder());
+                            if (!segs.contains(seg[0], seg[3])) {
+                                segments.add(new LineSegment(seg[0], seg[3]));
+                                segs.addSegment(seg[0], seg[3]);
+                            }
                         }
                     }
                 }
             }
         }
+    }
+    
+    private void checkForNullAndDuplicates(Point[] points) {
+        if (points == null) {
+            throw new java.lang.IllegalArgumentException();
+        }
+        for (Point p : points) {
+            if (p == null) {
+                throw new java.lang.IllegalArgumentException();
+            }
+        }
+        
+        Arrays.sort(points, naturalOrder());
+        Point last = points[0];
+        for (int i = 1; i < points.length; i++) {
+            if (last.compareTo(points[i]) == 0) {
+                throw new java.lang.IllegalArgumentException();
+            }
+            last = points[i];
+        }
+    }
+    
+    private Comparator<Point> naturalOrder() {
+        return new Comparator<Point>() {
+            
+            public int compare(Point p1, Point p2) {
+                return p1.compareTo(p2);
+            }
+        };
     }
     
     public int numberOfSegments() {
@@ -42,7 +105,11 @@ public class BruteCollinearPoints {
     }
     
     public static void main(String[] args) {
-
+        if (new Point(1,0) == new Point(1,0)) {StdOut.println("the same");} else {StdOut.println("not");}
+        Point[] arr = new Point[]{new Point(1, 0), new Point(55, 44), new Point(100, 40), new Point(55, 44)};
+        BruteCollinearPoints test = new BruteCollinearPoints(arr);
+        
+        /*
         // read the n points from a file
         In in = new In(args[0]);
         int n = in.readInt();
@@ -69,5 +136,6 @@ public class BruteCollinearPoints {
             segment.draw();
         }
         StdDraw.show();
+        */
     }
 }

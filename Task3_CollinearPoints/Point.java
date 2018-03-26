@@ -68,13 +68,12 @@ public class Point implements Comparable<Point> {
             return Double.NEGATIVE_INFINITY;
         }
         if (that.x == this.x) {
-            return 0.0;
-        }
-        if (that.y == this.y) {
             return Double.POSITIVE_INFINITY;
         }
-        
-        return (that.y - this.y) / (that.x - this.x);
+        if (that.y == this.y) {
+            return 0.0;
+        }
+        return ((double) that.y - this.y) / (that.x - this.x);
     }
     
     public Comparator<Point> slopeOrder() {
@@ -93,8 +92,8 @@ public class Point implements Comparable<Point> {
     }
     
     public static void main(String[] args) {
-        Point a = new Point(2, 1);
-        Point b = new Point(1, 1);
+        Point a = new Point(360, 340);
+        Point b = new Point(361, 340);
         StdOut.println(a.slopeTo(b));
     }
 }
