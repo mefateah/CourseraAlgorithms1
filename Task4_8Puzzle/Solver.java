@@ -7,15 +7,15 @@ public class Solver {
     }
 
     public boolean isSolvable() {
-
+        throw new java.lang.IllegalArgumentException();
     }
 
     public int moves() {
-
+        throw new java.lang.IllegalArgumentException();
     }
 
     public Iterable<Board> solution() {
-
+        throw new java.lang.IllegalArgumentException();
     }
 
     public static void main(String[] args) {
